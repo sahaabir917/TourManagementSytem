@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:fluttermvvmproviderdemo/Preference/SharedPreferenceHelper.dart';
 import 'package:fluttermvvmproviderdemo/models/EmployeeModel.dart';
+import 'package:fluttermvvmproviderdemo/models/FailedModel.dart';
 import 'package:fluttermvvmproviderdemo/models/SingleUserModel.dart';
+import 'package:fluttermvvmproviderdemo/models/TourUser.dart';
 import 'package:fluttermvvmproviderdemo/models/UsersModel.dart';
 import 'package:fluttermvvmproviderdemo/models/post.dart';
 import 'package:fluttermvvmproviderdemo/notifiers/EmployeeNotifier.dart';
@@ -20,6 +22,8 @@ class ApiService {
       "https://dummy.restapiexample.com/api/v1/employees";
   static const String API_ENDPOINT3 = "https://randomuser.me/api/";
   static const String API_ENDPOINT4 = "https://demo.guruklub.com/user/login";
+  static const String API_ENDPOINT5 =
+      "https://tourguidebd.herokuapp.com/api/v1/users/login";
 
   static SharedPreferences pref;
   static SharedPreferenceHelper sharedPreferenceHelper =
@@ -98,7 +102,8 @@ class ApiService {
     return result;
   }
 
-  static Future<bool> getLoginInfo(String email, String password, LoginNotifier loginNotifier) async {
+  static Future<bool> getLoginInfo(
+      String email, String password, LoginNotifier loginNotifier) async {
     // var map = new Map<String, dynamic>();
     // map['email'] = email;
     // map['password'] = password;
@@ -121,30 +126,34 @@ class ApiService {
     //   }
     // });
 
+    sharedPreferenceHelper.clearData();
     print("user login data");
     bool result = false;
-    await http.post(API_ENDPOINT4, body: body).then((response) {
+    await http.post(API_ENDPOINT5,
+        body: jsonEncode(body),
+        headers: {"Content-Type": "application/json"}).then((response) {
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         print("successful");
         result = true;
+        TourUser usersModel = TourUser.fromJson(jsonDecode(response.body));
         sharedPreferenceHelper.setUserData(response.body);
-        UsersModel usersModel = UsersModel.fromJson(jsonDecode(response.body));
         loginNotifier.setUsersLoginData(usersModel);
         loginNotifier.setIsLoggedIn(true);
-        if(usersModel.data!= null){
+        if (usersModel.data != null) {
           sharedPreferenceHelper.setIsLoggedIn(true);
         }
-        else{
-          sharedPreferenceHelper.setIsLoggedIn(false);
-        }
-      }
-      else{
+      } else if (response.statusCode == 401) {
         loginNotifier.setIsLoggedIn(false);
-        sharedPreferenceHelper.setUserData(response.body);
-        // sharedPreferenceHelper.setIsLoggedIn(false);
+        result = true;
+        FailedModel failedModel =
+            FailedModel.fromJson(jsonDecode(response.body));
+        loginNotifier.setFailedData(failedModel);
+        // sharedPreferenceHelper.setUserData(response.body);
+        sharedPreferenceHelper.setFailedData(response.body);
+        sharedPreferenceHelper.setIsLoggedIn(false);
       }
     });
 

@@ -1,11 +1,12 @@
+import 'package:fluttermvvmproviderdemo/models/TourUser.dart';
 import 'package:fluttermvvmproviderdemo/models/UsersModel.dart';
 
 class UserHomePageViewModel {
-  UsersModel _usersModel;
+  TourUser _usersModel;
 
-  setUserLogindata(UsersModel usersModel) {
+  setUserLogindata(TourUser usersModel) {
     _usersModel = usersModel;
   }
 
-  UsersModel get UserModel => _usersModel;
+  TourUser get UserModel => _usersModel;
 }

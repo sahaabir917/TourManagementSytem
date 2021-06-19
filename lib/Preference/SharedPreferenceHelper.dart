@@ -5,27 +5,25 @@ import 'package:fluttermvvmproviderdemo/models/UsersModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferenceHelper {
-   static SharedPreferences pref;
+  static SharedPreferences pref;
 
-   void clearData() async{
-     pref = await SharedPreferences.getInstance();
-     pref.setString("userData", "");
-     pref.setBool("userData", false);
-   }
+  void clearData() async {
+    pref = await SharedPreferences.getInstance();
+    pref.clear();
+  }
 
-   void setUserData(String jsonEncode) async {
-     pref = await SharedPreferences.getInstance();
-     pref.setString("userData", jsonEncode);
-   }
+  void setUserData(String jsonEncode) async {
+    pref = await SharedPreferences.getInstance();
+    pref.setString("userData", jsonEncode);
+  }
 
-   void setIsLoggedIn(bool isLogin) async {
-     pref = await SharedPreferences.getInstance();
-     pref.setBool("isLogin", isLogin);
-     pref.commit();
-   }
+  void setIsLoggedIn(bool isLogin) async {
+    pref = await SharedPreferences.getInstance();
+    pref.setBool("isLogin", isLogin);
+    pref.commit();
+  }
 
-
-   UsersModel getUserData() {
+  UsersModel getUserData() {
     // initSharedPref();
     // UsersModel usersModel= UsersModel.fromJson(json.decode(pref.getString("userData")));
     // return usersModel;
@@ -45,8 +43,8 @@ class SharedPreferenceHelper {
     // return null;
   }
 
-
-
-
-
+  void setFailedData(String response) async {
+    pref = await SharedPreferences.getInstance();
+    pref.setString("failedloginmsg", response);
+  }
 }

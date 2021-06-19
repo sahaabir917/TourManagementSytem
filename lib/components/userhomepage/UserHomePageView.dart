@@ -3,12 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttermvvmproviderdemo/Preference/SharedPreferenceHelper.dart';
 import 'package:fluttermvvmproviderdemo/components/userhomepage/UserHomePageViewModel.dart';
+import 'package:fluttermvvmproviderdemo/models/TourUser.dart';
 import 'package:fluttermvvmproviderdemo/models/UsersModel.dart';
 import 'package:fluttermvvmproviderdemo/screens/DashBoardScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserHomePageView extends StatefulWidget {
-  final UsersModel usersModel;
+  final TourUser usersModel;
 
   UserHomePageView({@required this.usersModel});
 
@@ -17,14 +18,14 @@ class UserHomePageView extends StatefulWidget {
 }
 
 class _UserHomePageViewState extends State<UserHomePageView> {
-  UsersModel usersModel;
+  TourUser usersModel;
   UserHomePageViewModel homePageViewModel;
 
   String msg;
 
   String username;
 
-  UsersModel usersModel1;
+  TourUser usersModel1;
 
   _UserHomePageViewState(this.usersModel) {
     homePageViewModel = new UserHomePageViewModel();
@@ -52,7 +53,7 @@ class _UserHomePageViewState extends State<UserHomePageView> {
       ),
       body: Container(
         child: Center(
-          child: Text("welcome to dashboard ${homePageViewModel.UserModel.data.email}"),
+          child: Text("welcome to dashboard ${homePageViewModel.UserModel.data.user.email}"),
         ),
       ),
     );
@@ -60,7 +61,7 @@ class _UserHomePageViewState extends State<UserHomePageView> {
 
    getUserName() async{
      SharedPreferences preferences = await SharedPreferences.getInstance();
-     usersModel1 = UsersModel.fromJson(json.decode(preferences.getString("userData")));
-     username = usersModel1.data.email;
+     usersModel1 = TourUser.fromJson(json.decode(preferences.getString("userData")));
+     username = usersModel1.data.user.email;
   }
 }
